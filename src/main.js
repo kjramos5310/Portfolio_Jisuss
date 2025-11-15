@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { HeroScene } from './scenes/HeroScene.js';
+import { AboutScene } from './scenes/AboutScene.js';
 
 /**
  * Setup principal de Three.js para el portfolio
@@ -31,6 +32,12 @@ class ThreeApp {
 
     // Inicializar Hero Scene
     this.heroScene = new HeroScene(this.scene, this.camera, this.renderer);
+
+    // Inicializar About Scene
+    this.aboutScene = new AboutScene(this.scene, this.camera, this.renderer);
+
+    // Estado de la escena actual
+    this.currentScene = 'hero'; // 'hero' o 'about'
 
     // Setup button interactions
     this.setupButtonInteractions();
@@ -95,19 +102,75 @@ class ThreeApp {
 
   onEnterMatrix() {
     // Callback para cuando se presiona el botón "Enter the Matrix"
-    console.log('✨ Matrix entered! Ready for next section.');
-    
+    console.log('✨ Matrix entered! Transitioning to About scene...');
+
     // Animación de transición del botón
     const heroUI = document.querySelector('.hero-ui');
     if (heroUI) {
       heroUI.style.transition = 'opacity 1s ease';
       heroUI.style.opacity = '0';
-      
+
       setTimeout(() => {
         heroUI.style.display = 'none';
-        console.log('🚀 Transition complete - Ready to load next section');
+
+        // Cambiar a la escena About
+        this.transitionToAbout();
+
+        console.log('🚀 Transition complete - About scene active');
       }, 1000);
     }
+  }
+
+  /**
+   * Transición suave desde Hero a About Scene
+   */
+  transitionToAbout() {
+    // Cambiar estado de escena
+    this.currentScene = 'about';
+
+    // Activar la escena About
+    if (this.aboutScene) {
+      this.aboutScene.activate();
+    }
+
+    // Animar la cámara suavemente hacia la nueva posición
+    this.animateCameraTransition(
+      { x: 0, y: 0, z: 5 },      // Posición inicial (Hero)
+      { x: 2, y: 0, z: 8 },      // Posición final (About)
+      2000                        // Duración en ms
+    );
+  }
+
+  /**
+   * Anima la cámara suavemente entre dos posiciones
+   */
+  animateCameraTransition(from, to, duration) {
+    const startTime = Date.now();
+    const startPos = { ...from };
+
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Easing function (ease-in-out)
+      const eased = progress < 0.5
+        ? 2 * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+      // Interpolar posición
+      this.camera.position.x = startPos.x + (to.x - startPos.x) * eased;
+      this.camera.position.y = startPos.y + (to.y - startPos.y) * eased;
+      this.camera.position.z = startPos.z + (to.z - startPos.z) * eased;
+
+      // Hacer que la cámara mire al centro
+      this.camera.lookAt(0, 0, 0);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    animate();
   }
   
   setupEventListeners() {
@@ -131,6 +194,11 @@ class ThreeApp {
     if (this.heroScene) {
       this.heroScene.onResize(this.sizes.width, this.sizes.height);
     }
+
+    // Update About Scene
+    if (this.aboutScene) {
+      this.aboutScene.onResize(this.sizes.width, this.sizes.height);
+    }
   }
   
   animate() {
@@ -139,13 +207,15 @@ class ThreeApp {
     // Update controls
     this.controls.update();
 
-    // Update Hero Scene
-    if (this.heroScene) {
+    // Update la escena activa
+    if (this.currentScene === 'hero' && this.heroScene) {
       this.heroScene.update();
+    } else if (this.currentScene === 'about' && this.aboutScene) {
+      this.aboutScene.update();
     }
 
-    // Render using Hero Scene's post-processing or default renderer
-    if (this.heroScene && this.heroScene.composer) {
+    // Render usando Hero Scene's post-processing o default renderer
+    if (this.currentScene === 'hero' && this.heroScene && this.heroScene.composer) {
       this.heroScene.render();
     } else {
       this.renderer.render(this.scene, this.camera);
