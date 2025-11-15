@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { HeroScene } from './scenes/HeroScene.js';
 import { AboutScene } from './scenes/AboutScene.js';
+import { TechStackScene } from './scenes/TechStackScene.js';
 
 /**
  * Setup principal de Three.js para el portfolio
@@ -36,8 +37,11 @@ class ThreeApp {
     // Inicializar About Scene
     this.aboutScene = new AboutScene(this.scene, this.camera, this.renderer);
 
+    // Inicializar TechStack Scene
+    this.techStackScene = new TechStackScene(this.scene, this.camera, this.renderer);
+
     // Estado de la escena actual
-    this.currentScene = 'hero'; // 'hero' o 'about'
+    this.currentScene = 'hero'; // 'hero', 'about', o 'techstack'
 
     // Setup button interactions
     this.setupButtonInteractions();
@@ -82,10 +86,10 @@ class ThreeApp {
     // Setup "Enter the Matrix" button
     const enterButton = document.getElementById('enterMatrix');
     console.log('🔍 Looking for button:', enterButton);
-    
+
     if (enterButton) {
       console.log('✅ Button found!');
-      
+
       enterButton.addEventListener('click', (e) => {
         console.log('🎯 Button clicked!', e);
         this.onEnterMatrix();
@@ -98,6 +102,29 @@ class ThreeApp {
     } else {
       console.error('❌ Button not found!');
     }
+
+    // Setup navigation buttons
+    const navAbout = document.getElementById('navAbout');
+    const navTechStack = document.getElementById('navTechStack');
+    const navHero = document.getElementById('navHero');
+
+    if (navAbout) {
+      navAbout.addEventListener('click', () => {
+        this.transitionToAbout();
+      });
+    }
+
+    if (navTechStack) {
+      navTechStack.addEventListener('click', () => {
+        this.transitionToTechStack();
+      });
+    }
+
+    if (navHero) {
+      navHero.addEventListener('click', () => {
+        this.transitionToHero();
+      });
+    }
   }
 
   onEnterMatrix() {
@@ -106,6 +133,8 @@ class ThreeApp {
 
     // Animación de transición del botón
     const heroUI = document.querySelector('.hero-ui');
+    const sceneNav = document.getElementById('sceneNav');
+
     if (heroUI) {
       heroUI.style.transition = 'opacity 1s ease';
       heroUI.style.opacity = '0';
@@ -113,12 +142,61 @@ class ThreeApp {
       setTimeout(() => {
         heroUI.style.display = 'none';
 
+        // Mostrar navegación
+        if (sceneNav) {
+          sceneNav.style.display = 'flex';
+          setTimeout(() => {
+            sceneNav.style.opacity = '1';
+          }, 10);
+        }
+
         // Cambiar a la escena About
         this.transitionToAbout();
 
         console.log('🚀 Transition complete - About scene active');
       }, 1000);
     }
+  }
+
+  /**
+   * Transición de regreso a Hero Scene
+   */
+  transitionToHero() {
+    // Cambiar estado de escena
+    this.currentScene = 'hero';
+
+    // Desactivar otras escenas
+    if (this.aboutScene && this.aboutScene.isActive) {
+      this.aboutScene.deactivate();
+    }
+    if (this.techStackScene && this.techStackScene.isActive) {
+      this.techStackScene.deactivate();
+    }
+
+    // Ocultar navegación y mostrar Hero UI
+    const heroUI = document.querySelector('.hero-ui');
+    const sceneNav = document.getElementById('sceneNav');
+
+    if (sceneNav) {
+      sceneNav.style.opacity = '0';
+      setTimeout(() => {
+        sceneNav.style.display = 'none';
+      }, 300);
+    }
+
+    if (heroUI) {
+      heroUI.style.display = 'block';
+      setTimeout(() => {
+        heroUI.style.opacity = '1';
+      }, 10);
+    }
+
+    // Animar cámara de regreso a posición Hero
+    this.animateCameraTransition(
+      this.camera.position,
+      { x: 0, y: 0, z: 5 },
+      2000
+    );
   }
 
   /**
@@ -138,6 +216,31 @@ class ThreeApp {
       { x: 0, y: 0, z: 5 },      // Posición inicial (Hero)
       { x: 2, y: 0, z: 8 },      // Posición final (About)
       2000                        // Duración en ms
+    );
+  }
+
+  /**
+   * Transición a TechStack Scene
+   */
+  transitionToTechStack() {
+    // Cambiar estado de escena
+    this.currentScene = 'techstack';
+
+    // Desactivar About si está activa
+    if (this.aboutScene && this.aboutScene.isActive) {
+      this.aboutScene.deactivate();
+    }
+
+    // Activar la escena TechStack
+    if (this.techStackScene) {
+      this.techStackScene.activate();
+    }
+
+    // Animar la cámara para ver el grid completo
+    this.animateCameraTransition(
+      this.camera.position,       // Posición actual
+      { x: 0, y: 0, z: 15 },      // Posición para ver todo el grid
+      2000                         // Duración en ms
     );
   }
 
@@ -199,6 +302,11 @@ class ThreeApp {
     if (this.aboutScene) {
       this.aboutScene.onResize(this.sizes.width, this.sizes.height);
     }
+
+    // Update TechStack Scene
+    if (this.techStackScene) {
+      this.techStackScene.onResize(this.sizes.width, this.sizes.height);
+    }
   }
   
   animate() {
@@ -212,11 +320,15 @@ class ThreeApp {
       this.heroScene.update();
     } else if (this.currentScene === 'about' && this.aboutScene) {
       this.aboutScene.update();
+    } else if (this.currentScene === 'techstack' && this.techStackScene) {
+      this.techStackScene.update();
     }
 
-    // Render usando Hero Scene's post-processing o default renderer
+    // Render usando post-processing de la escena activa o default renderer
     if (this.currentScene === 'hero' && this.heroScene && this.heroScene.composer) {
       this.heroScene.render();
+    } else if (this.currentScene === 'techstack' && this.techStackScene && this.techStackScene.composer) {
+      this.techStackScene.render();
     } else {
       this.renderer.render(this.scene, this.camera);
     }
