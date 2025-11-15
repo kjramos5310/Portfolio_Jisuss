@@ -3,23 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio 3D - Matrix Theme</title>
-  <link rel="stylesheet" href="/src/style.css">
+  <title>Jebus - Cybersecurity Analyst Portfolio</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Courier New', monospace;
+    }
+
+    #terminal-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.95);
+    }
+
+    @media (max-width: 768px) {
+      #terminal-section {
+        padding: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <canvas id="webgl"></canvas>
-
-  <!-- Hero UI Overlay -->
-  <div class="hero-ui" id="heroUI">
-    <div class="hero-button-container">
-      <button class="matrix-button" id="enterMatrix" data-text="ENTER THE MATRIX">
-        Enter the Matrix
-      </button>
-    </div>
-  </div>
-
-  <!-- Terminal Container (initially hidden) -->
-  <div id="terminal-section" class="terminal-section">
+  <!-- Terminal Container -->
+  <div id="terminal-section">
     <div id="terminal-container"></div>
   </div>
 
