@@ -8,6 +8,33 @@
 </head>
 <body>
   <canvas id="webgl"></canvas>
+
+  <!-- Matrix Rain Toggle -->
+  <div class="matrix-toggle-container">
+    <span class="matrix-toggle-label">Matrix Rain</span>
+    <label class="toggle-switch">
+      <input type="checkbox" id="matrix-toggle">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
   <script type="module" src="/src/main.js"></script>
+  <script type="module">
+    // Esperar a que el DOM esté listo
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('matrix-toggle');
+
+      // Manejar el toggle
+      toggle.addEventListener('change', (e) => {
+        if (window.matrixRain) {
+          if (e.target.checked) {
+            window.matrixRain.start();
+          } else {
+            window.matrixRain.stop();
+          }
+        }
+      });
+    });
+  </script>
 </body>
 </html>

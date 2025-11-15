@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import MatrixRain from './components/MatrixRain.js';
 
 /**
  * Setup básico de Three.js
@@ -31,9 +32,12 @@ class ThreeApp {
     // Cube de prueba (para verificar que funciona)
     this.addTestCube();
     
+    // Matrix Rain Effect
+    this.matrixRain = new MatrixRain();
+
     // Event listeners
     this.setupEventListeners();
-    
+
     // Start animation loop
     this.animate();
   }
@@ -115,5 +119,9 @@ class ThreeApp {
 
 // Initialize app
 const app = new ThreeApp();
+
+// Exponer globalmente para acceso desde HTML
+window.threeApp = app;
+window.matrixRain = app.matrixRain;
 
 export default app;
