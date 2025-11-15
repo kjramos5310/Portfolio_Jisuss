@@ -4,6 +4,8 @@ import { HeroScene } from './scenes/HeroScene.js';
 import { AboutScene } from './scenes/AboutScene.js';
 import { TechStackScene } from './scenes/TechStackScene.js';
 import { ProjectsScene } from './scenes/ProjectsScene.js';
+import { SceneManager } from './utils/SceneManager.js';
+import { Navigation } from './components/Navigation.js';
 
 /**
  * Setup principal de Three.js para el portfolio
@@ -32,20 +34,27 @@ class ThreeApp {
     // Controls
     this.setupControls();
 
+    // Inicializar SceneManager
+    this.sceneManager = new SceneManager(this.camera, this.renderer);
+
     // Inicializar Hero Scene
     this.heroScene = new HeroScene(this.scene, this.camera, this.renderer);
+    this.sceneManager.registerScene('hero', this.heroScene);
 
     // Inicializar About Scene
     this.aboutScene = new AboutScene(this.scene, this.camera, this.renderer);
+    this.sceneManager.registerScene('about', this.aboutScene);
 
     // Inicializar TechStack Scene
     this.techStackScene = new TechStackScene(this.scene, this.camera, this.renderer);
+    this.sceneManager.registerScene('techstack', this.techStackScene);
 
     // Inicializar Projects Scene
     this.projectsScene = new ProjectsScene(this.scene, this.camera, this.renderer);
+    this.sceneManager.registerScene('projects', this.projectsScene);
 
-    // Estado de la escena actual
-    this.currentScene = 'hero'; // 'hero', 'about', 'techstack', o 'projects'
+    // Inicializar Navigation
+    this.navigation = new Navigation(this.sceneManager);
 
     // Setup button interactions
     this.setupButtonInteractions();
@@ -113,29 +122,8 @@ class ThreeApp {
     const navProjects = document.getElementById('navProjects');
     const navHero = document.getElementById('navHero');
 
-    if (navAbout) {
-      navAbout.addEventListener('click', () => {
-        this.transitionToAbout();
-      });
-    }
-
-    if (navTechStack) {
-      navTechStack.addEventListener('click', () => {
-        this.transitionToTechStack();
-      });
-    }
-
-    if (navProjects) {
-      navProjects.addEventListener('click', () => {
-        this.transitionToProjects();
-      });
-    }
-
-    if (navHero) {
-      navHero.addEventListener('click', () => {
-        this.transitionToHero();
-      });
-    }
+    // Nota: Los botones de navegación ahora son manejados por el componente Navigation
+    // que se integra automáticamente con el SceneManager
   }
 
   onEnterMatrix() {
@@ -144,7 +132,6 @@ class ThreeApp {
 
     // Animación de transición del botón
     const heroUI = document.querySelector('.hero-ui');
-    const sceneNav = document.getElementById('sceneNav');
 
     if (heroUI) {
       heroUI.style.transition = 'opacity 1s ease';
@@ -154,172 +141,16 @@ class ThreeApp {
         heroUI.style.display = 'none';
 
         // Mostrar navegación
-        if (sceneNav) {
-          sceneNav.style.display = 'flex';
-          setTimeout(() => {
-            sceneNav.style.opacity = '1';
-          }, 10);
-        }
+        this.navigation.show();
 
-        // Cambiar a la escena About
-        this.transitionToAbout();
+        // Cambiar a la escena About usando SceneManager
+        this.sceneManager.transitionTo('about');
 
         console.log('🚀 Transition complete - About scene active');
       }, 1000);
     }
   }
 
-  /**
-   * Transición de regreso a Hero Scene
-   */
-  transitionToHero() {
-    // Cambiar estado de escena
-    this.currentScene = 'hero';
-
-    // Desactivar otras escenas
-    if (this.aboutScene && this.aboutScene.isActive) {
-      this.aboutScene.deactivate();
-    }
-    if (this.techStackScene && this.techStackScene.isActive) {
-      this.techStackScene.deactivate();
-    }
-    if (this.projectsScene && this.projectsScene.isActive) {
-      this.projectsScene.deactivate();
-    }
-
-    // Ocultar navegación y mostrar Hero UI
-    const heroUI = document.querySelector('.hero-ui');
-    const sceneNav = document.getElementById('sceneNav');
-
-    if (sceneNav) {
-      sceneNav.style.opacity = '0';
-      setTimeout(() => {
-        sceneNav.style.display = 'none';
-      }, 300);
-    }
-
-    if (heroUI) {
-      heroUI.style.display = 'block';
-      setTimeout(() => {
-        heroUI.style.opacity = '1';
-      }, 10);
-    }
-
-    // Animar cámara de regreso a posición Hero
-    this.animateCameraTransition(
-      this.camera.position,
-      { x: 0, y: 0, z: 5 },
-      2000
-    );
-  }
-
-  /**
-   * Transición suave desde Hero a About Scene
-   */
-  transitionToAbout() {
-    // Cambiar estado de escena
-    this.currentScene = 'about';
-
-    // Activar la escena About
-    if (this.aboutScene) {
-      this.aboutScene.activate();
-    }
-
-    // Animar la cámara suavemente hacia la nueva posición
-    this.animateCameraTransition(
-      { x: 0, y: 0, z: 5 },      // Posición inicial (Hero)
-      { x: 2, y: 0, z: 8 },      // Posición final (About)
-      2000                        // Duración en ms
-    );
-  }
-
-  /**
-   * Transición a TechStack Scene
-   */
-  transitionToTechStack() {
-    // Cambiar estado de escena
-    this.currentScene = 'techstack';
-
-    // Desactivar About si está activa
-    if (this.aboutScene && this.aboutScene.isActive) {
-      this.aboutScene.deactivate();
-    }
-    if (this.projectsScene && this.projectsScene.isActive) {
-      this.projectsScene.deactivate();
-    }
-
-    // Activar la escena TechStack
-    if (this.techStackScene) {
-      this.techStackScene.activate();
-    }
-
-    // Animar la cámara para ver el grid completo
-    this.animateCameraTransition(
-      this.camera.position,       // Posición actual
-      { x: 0, y: 0, z: 15 },      // Posición para ver todo el grid
-      2000                         // Duración en ms
-    );
-  }
-
-  /**
-   * Transición a Projects Scene
-   */
-  transitionToProjects() {
-    // Cambiar estado de escena
-    this.currentScene = 'projects';
-
-    // Desactivar otras escenas
-    if (this.aboutScene && this.aboutScene.isActive) {
-      this.aboutScene.deactivate();
-    }
-    if (this.techStackScene && this.techStackScene.isActive) {
-      this.techStackScene.deactivate();
-    }
-
-    // Activar la escena Projects
-    if (this.projectsScene) {
-      this.projectsScene.activate();
-    }
-
-    // Animar la cámara para ver el carrusel
-    this.animateCameraTransition(
-      this.camera.position,       // Posición actual
-      { x: 0, y: 2, z: 12 },      // Posición para ver el carrusel
-      2000                         // Duración en ms
-    );
-  }
-
-  /**
-   * Anima la cámara suavemente entre dos posiciones
-   */
-  animateCameraTransition(from, to, duration) {
-    const startTime = Date.now();
-    const startPos = { ...from };
-
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Easing function (ease-in-out)
-      const eased = progress < 0.5
-        ? 2 * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
-      // Interpolar posición
-      this.camera.position.x = startPos.x + (to.x - startPos.x) * eased;
-      this.camera.position.y = startPos.y + (to.y - startPos.y) * eased;
-      this.camera.position.z = startPos.z + (to.z - startPos.z) * eased;
-
-      // Hacer que la cámara mire al centro
-      this.camera.lookAt(0, 0, 0);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    animate();
-  }
   
   setupEventListeners() {
     window.addEventListener('resize', () => this.onResize());
@@ -365,23 +196,21 @@ class ThreeApp {
     // Update controls
     this.controls.update();
 
+    // Obtener escena actual del SceneManager
+    const currentSceneId = this.sceneManager.getCurrentSceneId();
+    const currentScene = this.sceneManager.getCurrentScene();
+
     // Update la escena activa
-    if (this.currentScene === 'hero' && this.heroScene) {
-      this.heroScene.update();
-    } else if (this.currentScene === 'about' && this.aboutScene) {
-      this.aboutScene.update();
-    } else if (this.currentScene === 'techstack' && this.techStackScene) {
-      this.techStackScene.update();
-    } else if (this.currentScene === 'projects' && this.projectsScene) {
-      this.projectsScene.update();
+    if (currentScene && currentScene.update) {
+      currentScene.update();
     }
 
     // Render usando post-processing de la escena activa o default renderer
-    if (this.currentScene === 'hero' && this.heroScene && this.heroScene.composer) {
+    if (currentSceneId === 'hero' && this.heroScene && this.heroScene.composer) {
       this.heroScene.render();
-    } else if (this.currentScene === 'techstack' && this.techStackScene && this.techStackScene.composer) {
+    } else if (currentSceneId === 'techstack' && this.techStackScene && this.techStackScene.composer) {
       this.techStackScene.render();
-    } else if (this.currentScene === 'projects' && this.projectsScene && this.projectsScene.composer) {
+    } else if (currentSceneId === 'projects' && this.projectsScene && this.projectsScene.composer) {
       this.projectsScene.render();
     } else {
       this.renderer.render(this.scene, this.camera);
