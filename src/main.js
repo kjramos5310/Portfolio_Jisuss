@@ -1,39 +1,43 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { HeroScene } from './scenes/HeroScene.js';
 
 /**
- * Setup básico de Three.js
+ * Setup principal de Three.js para el portfolio
  */
 class ThreeApp {
   constructor() {
     // Canvas
     this.canvas = document.querySelector('#webgl');
-    
+
     // Scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x000000);
-    
+
     // Sizes
     this.sizes = {
       width: window.innerWidth,
       height: window.innerHeight
     };
-    
+
     // Camera
     this.setupCamera();
-    
+
     // Renderer
     this.setupRenderer();
-    
+
     // Controls
     this.setupControls();
-    
-    // Cube de prueba (para verificar que funciona)
-    this.addTestCube();
-    
+
+    // Inicializar Hero Scene
+    this.heroScene = new HeroScene(this.scene, this.camera, this.renderer);
+
+    // Setup button interactions
+    this.setupButtonInteractions();
+
     // Event listeners
     this.setupEventListeners();
-    
+
     // Start animation loop
     this.animate();
   }
@@ -67,15 +71,23 @@ class ThreeApp {
     this.controls.maxDistance = 20;
   }
   
-  addTestCube() {
-    // Cubo simple con color verde Matrix
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ 
-      color: 0x00ff41,
-      wireframe: true 
-    });
-    this.testCube = new THREE.Mesh(geometry, material);
-    this.scene.add(this.testCube);
+  setupButtonInteractions() {
+    // Setup "Enter the Matrix" button
+    const enterButton = document.getElementById('enterMatrix');
+    if (enterButton) {
+      enterButton.addEventListener('click', () => {
+        console.log('🎯 Transitioning to next section...');
+        // TODO: Implementar transición a la siguiente sección
+        // Por ahora solo mostramos un mensaje en consola
+        this.onEnterMatrix();
+      });
+    }
+  }
+
+  onEnterMatrix() {
+    // Callback para cuando se presiona el botón "Enter the Matrix"
+    // Aquí se puede implementar la transición a la siguiente sección
+    console.log('✨ Matrix entered! Ready for next section.');
   }
   
   setupEventListeners() {
@@ -86,30 +98,38 @@ class ThreeApp {
     // Update sizes
     this.sizes.width = window.innerWidth;
     this.sizes.height = window.innerHeight;
-    
+
     // Update camera
     this.camera.aspect = this.sizes.width / this.sizes.height;
     this.camera.updateProjectionMatrix();
-    
+
     // Update renderer
     this.renderer.setSize(this.sizes.width, this.sizes.height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Update Hero Scene
+    if (this.heroScene) {
+      this.heroScene.onResize(this.sizes.width, this.sizes.height);
+    }
   }
   
   animate() {
     requestAnimationFrame(() => this.animate());
-    
+
     // Update controls
     this.controls.update();
-    
-    // Rotar el cubo de prueba
-    if (this.testCube) {
-      this.testCube.rotation.x += 0.01;
-      this.testCube.rotation.y += 0.01;
+
+    // Update Hero Scene
+    if (this.heroScene) {
+      this.heroScene.update();
     }
-    
-    // Render
-    this.renderer.render(this.scene, this.camera);
+
+    // Render using Hero Scene's post-processing or default renderer
+    if (this.heroScene && this.heroScene.composer) {
+      this.heroScene.render();
+    } else {
+      this.renderer.render(this.scene, this.camera);
+    }
   }
 }
 
