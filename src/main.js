@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { HeroScene } from './scenes/HeroScene.js';
+import { MatrixTerminal } from './components/Terminal.js';
 
 /**
  * Setup principal de Three.js para el portfolio
@@ -31,6 +32,9 @@ class ThreeApp {
 
     // Inicializar Hero Scene
     this.heroScene = new HeroScene(this.scene, this.camera, this.renderer);
+
+    // Inicializar Terminal
+    this.initTerminal();
 
     // Setup button interactions
     this.setupButtonInteractions();
@@ -70,6 +74,16 @@ class ThreeApp {
     this.controls.minDistance = 2;
     this.controls.maxDistance = 20;
   }
+
+  initTerminal() {
+    // Inicializar el terminal Matrix
+    this.terminal = new MatrixTerminal('terminal-container', {
+      enableCRT: true,
+      typewriterSpeed: 30,
+      promptSymbol: '$ ',
+      userName: 'jebus'
+    });
+  }
   
   setupButtonInteractions() {
     // Setup "Enter the Matrix" button
@@ -86,8 +100,24 @@ class ThreeApp {
 
   onEnterMatrix() {
     // Callback para cuando se presiona el botón "Enter the Matrix"
-    // Aquí se puede implementar la transición a la siguiente sección
-    console.log('✨ Matrix entered! Ready for next section.');
+    console.log('✨ Matrix entered! Activating terminal...');
+
+    // Obtener elementos
+    const heroUI = document.getElementById('heroUI');
+    const terminalSection = document.getElementById('terminal-section');
+
+    // Ocultar hero UI con transición
+    heroUI.classList.add('hidden');
+
+    // Mostrar terminal después de un breve delay
+    setTimeout(() => {
+      terminalSection.classList.add('active');
+
+      // Ejecutar comando de bienvenida automático
+      setTimeout(() => {
+        this.terminal.runCommand('neofetch');
+      }, 1000);
+    }, 500);
   }
   
   setupEventListeners() {

@@ -239,6 +239,38 @@ body {
 }
 
 /* ========================================
+   TERMINAL SECTION
+   ======================================== */
+.terminal-section {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  background: rgba(0, 0, 0, 0.95);
+}
+
+.terminal-section.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Ocultar hero UI cuando el terminal está activo */
+.hero-ui.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* ========================================
    RESPONSIVE
    ======================================== */
 @media (max-width: 768px) {
@@ -250,5 +282,9 @@ body {
 
   .hero-button-container {
     bottom: 10%;
+  }
+
+  .terminal-section {
+    padding: 10px;
   }
 }

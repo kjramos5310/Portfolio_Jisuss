@@ -10,12 +10,17 @@
   <canvas id="webgl"></canvas>
 
   <!-- Hero UI Overlay -->
-  <div class="hero-ui">
+  <div class="hero-ui" id="heroUI">
     <div class="hero-button-container">
       <button class="matrix-button" id="enterMatrix" data-text="ENTER THE MATRIX">
         Enter the Matrix
       </button>
     </div>
+  </div>
+
+  <!-- Terminal Container (initially hidden) -->
+  <div id="terminal-section" class="terminal-section">
+    <div id="terminal-container"></div>
   </div>
 
   <script type="module" src="/src/main.js"></script>
