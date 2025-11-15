@@ -355,3 +355,74 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+/* ========================================
+   NAVIGATION BAR
+   ======================================== */
+.scene-nav {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  display: flex;
+  gap: 15px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav-button {
+  padding: 12px 24px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--matrix-green-primary);
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid var(--matrix-green-primary);
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  box-shadow: var(--glow-small);
+  backdrop-filter: blur(10px);
+}
+
+.nav-button:hover {
+  color: var(--bg-black);
+  background: var(--matrix-green-primary);
+  box-shadow: var(--glow-large);
+  transform: translateY(-2px);
+}
+
+.nav-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive navigation */
+@media (max-width: 768px) {
+  .scene-nav {
+    top: 20px;
+    right: 20px;
+    gap: 10px;
+    flex-direction: column;
+  }
+
+  .nav-button {
+    padding: 10px 20px;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scene-nav {
+    top: 10px;
+    right: 10px;
+    gap: 8px;
+  }
+
+  .nav-button {
+    padding: 8px 16px;
+    font-size: 11px;
+  }
+}
