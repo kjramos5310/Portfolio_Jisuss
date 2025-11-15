@@ -74,20 +74,40 @@ class ThreeApp {
   setupButtonInteractions() {
     // Setup "Enter the Matrix" button
     const enterButton = document.getElementById('enterMatrix');
+    console.log('🔍 Looking for button:', enterButton);
+    
     if (enterButton) {
-      enterButton.addEventListener('click', () => {
-        console.log('🎯 Transitioning to next section...');
-        // TODO: Implementar transición a la siguiente sección
-        // Por ahora solo mostramos un mensaje en consola
+      console.log('✅ Button found!');
+      
+      enterButton.addEventListener('click', (e) => {
+        console.log('🎯 Button clicked!', e);
         this.onEnterMatrix();
       });
+
+      // Verificar que el botón es clickeable
+      enterButton.addEventListener('mouseenter', () => {
+        console.log('👆 Mouse over button');
+      });
+    } else {
+      console.error('❌ Button not found!');
     }
   }
 
   onEnterMatrix() {
     // Callback para cuando se presiona el botón "Enter the Matrix"
-    // Aquí se puede implementar la transición a la siguiente sección
     console.log('✨ Matrix entered! Ready for next section.');
+    
+    // Animación de transición del botón
+    const heroUI = document.querySelector('.hero-ui');
+    if (heroUI) {
+      heroUI.style.transition = 'opacity 1s ease';
+      heroUI.style.opacity = '0';
+      
+      setTimeout(() => {
+        heroUI.style.display = 'none';
+        console.log('🚀 Transition complete - Ready to load next section');
+      }, 1000);
+    }
   }
   
   setupEventListeners() {
