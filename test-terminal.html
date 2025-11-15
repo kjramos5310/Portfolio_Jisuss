@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Matrix Terminal</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #000;
+      font-family: 'Courier New', monospace;
+      color: #00ff41;
+    }
+
+    h1 {
+      text-align: center;
+      color: #00ff41;
+      text-shadow: 0 0 10px #00ff41;
+    }
+
+    #test-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .button-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      background: transparent;
+      color: #00ff41;
+      border: 2px solid #00ff41;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #00ff41;
+      color: #000;
+      box-shadow: 0 0 20px #00ff41;
+    }
+
+    .status {
+      text-align: center;
+      margin: 20px 0;
+      padding: 10px;
+      border: 1px solid #00ff41;
+    }
+  </style>
+</head>
+<body>
+  <h1>🖥️ Matrix Terminal - Test Page</h1>
+
+  <div class="button-container">
+    <button onclick="testTerminal()">🚀 Inicializar Terminal</button>
+    <button onclick="testCommands()">⌨️ Ejecutar Comandos</button>
+  </div>
+
+  <div class="status" id="status">
+    Esperando inicialización...
+  </div>
+
+  <div id="test-container"></div>
+
+  <script type="module">
+    import { MatrixTerminal } from './src/components/Terminal.js';
+
+    let terminal = null;
+
+    window.testTerminal = function() {
+      const status = document.getElementById('status');
+
+      try {
+        console.log('🔄 Creando terminal...');
+        status.textContent = '🔄 Creando terminal...';
+
+        terminal = new MatrixTerminal('test-container', {
+          enableCRT: true,
+          typewriterSpeed: 30,
+          promptSymbol: '$ ',
+          userName: 'jebus'
+        });
+
+        console.log('✅ Terminal creado:', terminal);
+        status.textContent = '✅ Terminal creado exitosamente!';
+      } catch (error) {
+        console.error('❌ Error al crear terminal:', error);
+        status.textContent = '❌ Error: ' + error.message;
+      }
+    };
+
+    window.testCommands = async function() {
+      const status = document.getElementById('status');
+
+      if (!terminal) {
+        status.textContent = '⚠️ Primero debes inicializar el terminal!';
+        return;
+      }
+
+      try {
+        status.textContent = '🔄 Ejecutando comandos de prueba...';
+
+        await terminal.runCommand('whoami');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        await terminal.runCommand('cat skills.txt');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        await terminal.runCommand('ls projects/');
+
+        status.textContent = '✅ Comandos ejecutados!';
+      } catch (error) {
+        console.error('❌ Error al ejecutar comandos:', error);
+        status.textContent = '❌ Error: ' + error.message;
+      }
+    };
+
+    // Auto-inicializar después de 1 segundo
+    setTimeout(() => {
+      console.log('🚀 Auto-inicializando terminal...');
+      testTerminal();
+    }, 1000);
+  </script>
+</body>
+</html>

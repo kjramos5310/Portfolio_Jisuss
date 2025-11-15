@@ -76,13 +76,20 @@ class ThreeApp {
   }
 
   initTerminal() {
-    // Inicializar el terminal Matrix
-    this.terminal = new MatrixTerminal('terminal-container', {
-      enableCRT: true,
-      typewriterSpeed: 30,
-      promptSymbol: '$ ',
-      userName: 'jebus'
-    });
+    // Verificar que el contenedor exista antes de inicializar
+    const container = document.getElementById('terminal-container');
+    if (container) {
+      console.log('✅ Inicializando terminal...');
+      this.terminal = new MatrixTerminal('terminal-container', {
+        enableCRT: true,
+        typewriterSpeed: 30,
+        promptSymbol: '$ ',
+        userName: 'jebus'
+      });
+      console.log('✅ Terminal inicializado:', this.terminal);
+    } else {
+      console.error('❌ No se encontró el contenedor del terminal');
+    }
   }
   
   setupButtonInteractions() {
@@ -106,16 +113,35 @@ class ThreeApp {
     const heroUI = document.getElementById('heroUI');
     const terminalSection = document.getElementById('terminal-section');
 
+    console.log('Hero UI:', heroUI);
+    console.log('Terminal Section:', terminalSection);
+    console.log('Terminal instance:', this.terminal);
+
+    if (!heroUI || !terminalSection) {
+      console.error('❌ No se encontraron los elementos necesarios');
+      return;
+    }
+
+    if (!this.terminal) {
+      console.error('❌ Terminal no está inicializado');
+      return;
+    }
+
     // Ocultar hero UI con transición
+    console.log('🔄 Ocultando Hero UI...');
     heroUI.classList.add('hidden');
 
     // Mostrar terminal después de un breve delay
     setTimeout(() => {
+      console.log('🔄 Mostrando terminal...');
       terminalSection.classList.add('active');
 
       // Ejecutar comando de bienvenida automático
       setTimeout(() => {
-        this.terminal.runCommand('neofetch');
+        console.log('🔄 Ejecutando neofetch...');
+        if (this.terminal && this.terminal.runCommand) {
+          this.terminal.runCommand('neofetch');
+        }
       }, 1000);
     }, 500);
   }
