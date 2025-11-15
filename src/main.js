@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { HeroScene } from './scenes/HeroScene.js';
 import { AboutScene } from './scenes/AboutScene.js';
 import { TechStackScene } from './scenes/TechStackScene.js';
+import { ProjectsScene } from './scenes/ProjectsScene.js';
 
 /**
  * Setup principal de Three.js para el portfolio
@@ -40,8 +41,11 @@ class ThreeApp {
     // Inicializar TechStack Scene
     this.techStackScene = new TechStackScene(this.scene, this.camera, this.renderer);
 
+    // Inicializar Projects Scene
+    this.projectsScene = new ProjectsScene(this.scene, this.camera, this.renderer);
+
     // Estado de la escena actual
-    this.currentScene = 'hero'; // 'hero', 'about', o 'techstack'
+    this.currentScene = 'hero'; // 'hero', 'about', 'techstack', o 'projects'
 
     // Setup button interactions
     this.setupButtonInteractions();
@@ -106,6 +110,7 @@ class ThreeApp {
     // Setup navigation buttons
     const navAbout = document.getElementById('navAbout');
     const navTechStack = document.getElementById('navTechStack');
+    const navProjects = document.getElementById('navProjects');
     const navHero = document.getElementById('navHero');
 
     if (navAbout) {
@@ -117,6 +122,12 @@ class ThreeApp {
     if (navTechStack) {
       navTechStack.addEventListener('click', () => {
         this.transitionToTechStack();
+      });
+    }
+
+    if (navProjects) {
+      navProjects.addEventListener('click', () => {
+        this.transitionToProjects();
       });
     }
 
@@ -171,6 +182,9 @@ class ThreeApp {
     }
     if (this.techStackScene && this.techStackScene.isActive) {
       this.techStackScene.deactivate();
+    }
+    if (this.projectsScene && this.projectsScene.isActive) {
+      this.projectsScene.deactivate();
     }
 
     // Ocultar navegación y mostrar Hero UI
@@ -230,6 +244,9 @@ class ThreeApp {
     if (this.aboutScene && this.aboutScene.isActive) {
       this.aboutScene.deactivate();
     }
+    if (this.projectsScene && this.projectsScene.isActive) {
+      this.projectsScene.deactivate();
+    }
 
     // Activar la escena TechStack
     if (this.techStackScene) {
@@ -240,6 +257,34 @@ class ThreeApp {
     this.animateCameraTransition(
       this.camera.position,       // Posición actual
       { x: 0, y: 0, z: 15 },      // Posición para ver todo el grid
+      2000                         // Duración en ms
+    );
+  }
+
+  /**
+   * Transición a Projects Scene
+   */
+  transitionToProjects() {
+    // Cambiar estado de escena
+    this.currentScene = 'projects';
+
+    // Desactivar otras escenas
+    if (this.aboutScene && this.aboutScene.isActive) {
+      this.aboutScene.deactivate();
+    }
+    if (this.techStackScene && this.techStackScene.isActive) {
+      this.techStackScene.deactivate();
+    }
+
+    // Activar la escena Projects
+    if (this.projectsScene) {
+      this.projectsScene.activate();
+    }
+
+    // Animar la cámara para ver el carrusel
+    this.animateCameraTransition(
+      this.camera.position,       // Posición actual
+      { x: 0, y: 2, z: 12 },      // Posición para ver el carrusel
       2000                         // Duración en ms
     );
   }
@@ -307,6 +352,11 @@ class ThreeApp {
     if (this.techStackScene) {
       this.techStackScene.onResize(this.sizes.width, this.sizes.height);
     }
+
+    // Update Projects Scene
+    if (this.projectsScene) {
+      this.projectsScene.onResize(this.sizes.width, this.sizes.height);
+    }
   }
   
   animate() {
@@ -322,6 +372,8 @@ class ThreeApp {
       this.aboutScene.update();
     } else if (this.currentScene === 'techstack' && this.techStackScene) {
       this.techStackScene.update();
+    } else if (this.currentScene === 'projects' && this.projectsScene) {
+      this.projectsScene.update();
     }
 
     // Render usando post-processing de la escena activa o default renderer
@@ -329,6 +381,8 @@ class ThreeApp {
       this.heroScene.render();
     } else if (this.currentScene === 'techstack' && this.techStackScene && this.techStackScene.composer) {
       this.techStackScene.render();
+    } else if (this.currentScene === 'projects' && this.projectsScene && this.projectsScene.composer) {
+      this.projectsScene.render();
     } else {
       this.renderer.render(this.scene, this.camera);
     }
