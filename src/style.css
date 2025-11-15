@@ -1,0 +1,61 @@
+/* ========================================
+   CSS RESET
+   ======================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ========================================
+   VARIABLES DEL TEMA MATRIX
+   ======================================== */
+:root {
+  /* Colores principales */
+  --matrix-green-primary: #00ff41;
+  --matrix-green-secondary: #008f11;
+  --matrix-green-dark: #003b00;
+  --matrix-green-glow: #39ff14;
+  
+  /* Colores de fondo */
+  --bg-black: #000000;
+  --bg-dark: #0d0208;
+  --bg-darker: #050505;
+  
+  /* Colores de acento */
+  --accent-cyan: #00ffff;
+  --accent-lime: #ccff00;
+  
+  /* Sombras y brillo */
+  --glow-small: 0 0 5px var(--matrix-green-glow);
+  --glow-medium: 0 0 10px var(--matrix-green-glow);
+  --glow-large: 0 0 20px var(--matrix-green-glow);
+  
+  /* Fuentes */
+  --font-mono: 'Courier New', monospace;
+}
+
+/* ========================================
+   ESTILOS BASE
+   ======================================== */
+body {
+  font-family: var(--font-mono);
+  background-color: var(--bg-black);
+  color: var(--matrix-green-primary);
+}
+
+#webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
