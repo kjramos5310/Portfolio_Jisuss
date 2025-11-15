@@ -242,6 +242,44 @@ body {
 }
 
 /* ========================================
+   ABOUT SECTION
+   ======================================== */
+#about-terminal-container {
+  /* Estilos base ya definidos inline en AboutScene.js */
+}
+
+/* Animaciones de fade para transiciones */
+.fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.fade-out {
+  animation: fadeOut 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(20px);
+  }
+}
+
+/* ========================================
    RESPONSIVE
    ======================================== */
 @media (max-width: 768px) {
@@ -254,4 +292,66 @@ body {
   .hero-button-container {
     bottom: 10%;
   }
+
+  /* About section responsive */
+  #about-terminal-container {
+    width: 95% !important;
+    max-width: 100% !important;
+  }
+
+  /* Ajustar tamaño del terminal en móviles */
+  .matrix-terminal {
+    max-width: 100% !important;
+  }
+
+  .terminal-body {
+    min-height: 300px !important;
+    max-height: 400px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .matrix-button {
+    padding: 12px 25px;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  /* Terminal más compacto en pantallas pequeñas */
+  #about-terminal-container {
+    width: 98% !important;
+  }
+
+  .terminal-body {
+    min-height: 250px !important;
+    max-height: 350px !important;
+    font-size: 12px !important;
+  }
+
+  .terminal-header {
+    padding: 8px 12px !important;
+  }
+
+  .terminal-title {
+    font-size: 11px !important;
+  }
+}
+
+/* Landscape móvil */
+@media (max-width: 768px) and (orientation: landscape) {
+  #about-terminal-container {
+    width: 90% !important;
+    max-height: 80vh !important;
+  }
+
+  .terminal-body {
+    max-height: 50vh !important;
+  }
+}
+
+/* ========================================
+   SCROLL SUAVE
+   ======================================== */
+html {
+  scroll-behavior: smooth;
 }
